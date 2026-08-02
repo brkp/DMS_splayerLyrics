@@ -1,0 +1,16 @@
+{
+    "id": "splayerDesktopLyrics",
+    "name": "SPlayer Lyrics",
+    "description": "Desktop lyrics widget for SPlayer, fetches lyrics from SPlayer's local Netease API",
+    "version": "1.0.0",
+    "author": "brkpt",
+    "icon": "music_note",
+    "type": "desktop",
+    "component": "./SPlayerLyrics.qml",
+    "capabilities": ["desktop-widget"],
+    "compositors": ["any"],
+    "distro": ["any"],
+    "dependencies": ["dms"],
+    "requires_dms": ">=1.2.0",
+    "permissions": ["settings_read", "settings_write", "network"]
+}
