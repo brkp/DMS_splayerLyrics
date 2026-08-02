@@ -15,6 +15,11 @@ DesktopPluginComponent {
     minWidth: 280
     minHeight: 140
 
+    // 只有 splayer 运行时才显示；否则整体透明、不占视觉
+    opacity: root.playerActive ? 1 : 0
+    visible: root.playerActive
+    Behavior on opacity { NumberAnimation { duration: 200 } }
+
     // ---------------- settings (pluginData / instance config) ----------------
     // transparency is the canonical key (matches builtin widgets); bgOpacity kept as legacy fallback
     property real bgOpacity: pluginData.transparency ?? pluginData.bgOpacity ?? 0.8
@@ -24,6 +29,7 @@ DesktopPluginComponent {
 
     // ---------------- MPRIS state ----------------
     readonly property MprisPlayer player: MprisController.activePlayer
+    readonly property bool playerActive: !!root.player
 
     property string trackId: player && player.metadata && player.metadata["mpris:trackid"]
                              ? String(player.metadata["mpris:trackid"]) : ""
@@ -47,6 +53,13 @@ DesktopPluginComponent {
         if (!idStr) return "";
         var m = idStr.match(/(\d+)/);
         return m ? m[1] : "";
+    }
+
+    // splayer 运行时关闭鼠标穿透（可交互）；不运行时开启穿透（不挡鼠标）
+    function syncClickThrough() {
+        if (root.pluginService && root.pluginId) {
+            root.setData("clickThrough", !root.playerActive);
+        }
     }
 
     function parseLrc(lrcText) {
@@ -111,10 +124,30 @@ DesktopPluginComponent {
     onTrackIdChanged: {
         if (root.trackId) {
             root.fetchLyrics();
+        } else {
+            // player 退出或切走：清空缓存歌词
+            root.lyricsLines = [];
+            root.currentLineIndex = -1;
+            root._lastFetchedTrackId = "";
+            root.statusText = "等待 SPlayer…";
         }
     }
 
+    onPlayerChanged: {
+        // 播放器实例消失（splayer 关闭等）：清空缓存歌词
+        if (!root.player) {
+            root.lyricsLines = [];
+            root.currentLineIndex = -1;
+            root._lastFetchedTrackId = "";
+            root.statusText = "等待 SPlayer…";
+        }
+        root.syncClickThrough();
+    }
+
+    onPlayerActiveChanged: root.syncClickThrough()
+
     Component.onCompleted: {
+        root.syncClickThrough();
         if (root.trackId) {
             root.fetchLyrics();
         } else {
@@ -162,12 +195,12 @@ DesktopPluginComponent {
             Item {
                 Layout.fillWidth: true
                 implicitHeight: Math.max(titleRow.implicitHeight, 20)
+                visible: root.showTitle
 
                 RowLayout {
                     id: titleRow
                     anchors.fill: parent
                     spacing: Theme.spacingXS
-                    visible: root.showTitle
 
                     StyledText {
                         Layout.fillWidth: true
