@@ -1,6 +1,6 @@
 {
     "id": "splayerDesktopLyrics",
-    "name": "SPlayer Lyrics",
+    "name": "SPlayer Lyrics (Desktop)",
     "description": "Desktop lyrics widget for SPlayer, fetches lyrics from SPlayer's local Netease API",
     "version": "1.0.0",
     "author": "brkpt",
