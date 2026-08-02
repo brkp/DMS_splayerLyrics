@@ -15,8 +15,9 @@ DesktopPluginComponent {
     minWidth: 280
     minHeight: 140
 
-    // ---------------- settings (pluginData) ----------------
-    property real bgOpacity: pluginData.bgOpacity ?? 0.8
+    // ---------------- settings (pluginData / instance config) ----------------
+    // transparency is the canonical key (matches builtin widgets); bgOpacity kept as legacy fallback
+    property real bgOpacity: pluginData.transparency ?? pluginData.bgOpacity ?? 0.8
     property int lyricFontSize: pluginData.lyricFontSize ?? 15
     property bool showTitle: pluginData.showTitle ?? true
     property string apiBase: pluginData.apiBase ?? "http://127.0.0.1:25884"
@@ -166,6 +167,7 @@ DesktopPluginComponent {
                     id: titleRow
                     anchors.fill: parent
                     spacing: Theme.spacingXS
+                    visible: root.showTitle
 
                     StyledText {
                         Layout.fillWidth: true
