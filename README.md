@@ -18,7 +18,7 @@ Dank Material Shell (dms) 桌面部件插件：显示 SPlayer 正在播放歌曲
 dms plugins install splayerDesktopLyrics
 ```
 
-安装后在 dms 设置中启用 SPlayer Lyrics (Desktop)，然后桌面右键添加部件即可。
+安装后在 dms 设置中启用 SPlayer Lyrics (Desktop)。
 
 ## 更新
 
