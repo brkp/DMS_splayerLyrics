@@ -28,7 +28,20 @@ DesktopPluginComponent {
     property string apiBase: pluginData.apiBase ?? "http://127.0.0.1:25884"
 
     // ---------------- MPRIS state ----------------
-    readonly property MprisPlayer player: MprisController.activePlayer
+    // 只监听 SPlayer，忽略其他 MPRIS 播放器（浏览器等）
+    // Mpris.players 是 Quickshell 原生 MPRIS 模块的播放器映射，values 返回所有实例
+    readonly property var allPlayers: Mpris.players.values
+    readonly property MprisPlayer player: {
+        var players = root.allPlayers || [];
+        for (var i = 0; i < players.length; i++) {
+            var bus = players[i].busName || "";
+            var ident = players[i].identity || "";
+            if (bus.indexOf("splayer") !== -1 || ident.toLowerCase().indexOf("splayer") !== -1) {
+                return players[i];
+            }
+        }
+        return null;
+    }
     readonly property bool playerActive: !!root.player
 
     property string trackId: player && player.metadata && player.metadata["mpris:trackid"]
